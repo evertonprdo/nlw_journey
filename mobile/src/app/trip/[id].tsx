@@ -48,12 +48,18 @@ export default function Trip() {
     const [ guestName, setGuestName ] = useState("")
     const [ guestEmail, setGuestEmail ] = useState("")
 
-    const tripParams = useLocalSearchParams<{ id: string, participants?: string }>()
+    const tripParams = useLocalSearchParams<{
+        id: string,
+        participant?: string
+    }>()
     
     async function getTripDetails() {
         try {
             setIsLoadingTrip(true)
 
+            if(tripParams.participant){
+                setShownModal(MODAL.CONFIRM_ATTENDANCE)
+            }
             if(!tripParams.id) {
                 return router.back()
             }
@@ -129,7 +135,7 @@ export default function Trip() {
 
     async function handleConfirmedAttendence() {
         try {
-            if(!tripParams.participants || !tripParams.id) {
+            if(!tripParams.participant || !tripParams.id) {
                 return
             }
             if(!guestName.trim() || !guestEmail.trim()) {
@@ -141,7 +147,7 @@ export default function Trip() {
 
             setIsConfirmedAttendence(true)
             await participantsServer.confirmTripByParticipantId({
-                participantId: tripParams.participants,
+                participantId: tripParams.participant,
                 name: guestName,
                 email: guestEmail.trim()
             })
@@ -156,6 +162,26 @@ export default function Trip() {
             Alert.alert("Confirmação", "Não foi possivel confirmar!")
         } finally {
             setIsConfirmedAttendence(false)
+        }
+    }
+
+    async function handleRemoveTrip() {
+        try {
+            Alert.alert("Remover viagem", "Tem certeza que deseja remover a viajem", [
+                {
+                    text: "Não",
+                    style: "cancel"
+                },
+                {
+                    text: "Sim",
+                    onPress: async () => {
+                        await tripStorage.remove()
+                        router.navigate("/")
+                    }
+                }
+            ])
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -250,6 +276,10 @@ export default function Trip() {
                     <Button onPress={handleUpdateTrip} isLoading={isUpdatingTrip}>
                         <Button.Title>Atualizar</Button.Title>
                     </Button>
+
+                    <TouchableOpacity activeOpacity={0.8} onPress={ handleRemoveTrip }>
+                        <Text className="text-red-400 text-center mt-6">Remover viagem</Text>
+                    </TouchableOpacity>
                 </View>
             </Modal>
 
