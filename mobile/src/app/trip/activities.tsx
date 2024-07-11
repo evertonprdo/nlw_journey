@@ -35,16 +35,16 @@ type TripActivitiesProps = {
 
 export function TripActivities({ tripDetails }: Props) {
     // MODAL
-    const [ showModal, setShowModal ] = useState(MODAL.NONE)
+    const [ showModal, setShowModal ] = useState(MODAL.NONE) // Controlador do Modal
 
     // LOADING
-    const [ isCreatingActivity, setIsCreatingActivity ] = useState(false)
-    const [ isLoadingActivities, setIsLoadingActivities ] = useState(true)
+    const [ isCreatingActivity, setIsCreatingActivity ] = useState(false) // Await de Criar atividade
+    const [ isLoadingActivities, setIsLoadingActivities ] = useState(true) // Await de Pegar as atividades
 
     // DATA
-    const [ activityTitle, setActivityTitle ] = useState("")
-    const [ activityDate, setActivityDate ] = useState("")
-    const [ activityHour, setActivityHour ] = useState("")
+    const [ activityTitle, setActivityTitle ] = useState("") // Campos para criar atividade
+    const [ activityDate, setActivityDate ] = useState("") // Campos para criar atividade
+    const [ activityHour, setActivityHour ] = useState("") // Campos para criar atividade
 
     // LIST
     const [ tripActivities, setTripActivities ] = useState<TripActivitiesProps[]>([])
@@ -56,7 +56,7 @@ export function TripActivities({ tripDetails }: Props) {
         setShowModal(MODAL.NONE)
     }
 
-    async function handleCreateTripActivity() {
+    async function handleCreateTripActivity() { // Criando Atividade da Viagem
         try {
             if(!activityTitle || !activityDate || !activityHour) {
                 return Alert.alert("Cadastrar atividade", "Preencha todos os campos!")
@@ -81,7 +81,7 @@ export function TripActivities({ tripDetails }: Props) {
         }
     }
 
-    async function getTripActivities() {
+    async function getTripActivities() { // Pegando as Atividades da Viagem, e criando um objeto SectionList
         try {
             const activities = await activitiesServer.getActivitiesByTripId(tripDetails.id)
            
@@ -110,6 +110,16 @@ export function TripActivities({ tripDetails }: Props) {
         getTripActivities()
     }, [])
 
+    /**
+     * Atividades
+     * 
+     * <Button nova atividade -> <Modal nova atividade/> />
+     * 
+     * <SectionList renderItem />
+     * 
+     * <Modal nova atividade/>
+     *      <Modal de calendario />
+     */
     return (
         <View className="flex-1">
             <View className="w-full flex-row mt-5 mb-6 items-center">

@@ -1,6 +1,8 @@
-import dayjs, { Dayjs } from "dayjs"
-import { DateData, CalendarUtils } from "react-native-calendars"
-import { MarkedDates } from "react-native-calendars/src/types"
+import dayjs, { type Dayjs } from "dayjs"
+import { type DateData, CalendarUtils } from "react-native-calendars"
+import type { MarkedDates } from "react-native-calendars/src/types"
+
+// Funções para lidar com o calendario
 
 type OrderStartsAtAndEndsAt = {
   startsAt?: DateData

@@ -33,27 +33,30 @@ enum MODAL {
 
 export default function Trip() {
     // LOADING
-    const [ isLoadingTrip, setIsLoadingTrip ] = useState(true)
-    const [ isUpdatingTrip, setIsUpdatingTrip ] = useState(false)
-    const [ isConfirmedAttendance, setIsConfirmedAttendence ] = useState(false)
+    const [ isLoadingTrip, setIsLoadingTrip ] = useState(true) // Await do getTripDetails e UpdateTrip.
+    const [ isUpdatingTrip, setIsUpdatingTrip ] = useState(false) // Await de Update Trip.
+    const [ isConfirmedAttendance, setIsConfirmedAttendence ] = useState(false) // Await da requisição para confirmar presença do convidado.
 
     // MODAL
-    const [ showModal, setShownModal ] = useState(0)
+    const [ showModal, setShownModal ] = useState(0) // controlador do modal
 
     // DATA
-    const [tripDetails, setTripDetails] = useState({} as TripData)
-    const [ option, setOption ] = useState<"activity" | "details">("activity")
-    const [ destination, setDestination ] = useState("")
-    const [ selectedDates, setSelectedDates ] = useState({} as DatesSelected)
-    const [ guestName, setGuestName ] = useState("")
-    const [ guestEmail, setGuestEmail ] = useState("")
+    const [ tripDetails, setTripDetails ] = useState({} as TripData) // Get de Trip Details
 
-    const tripParams = useLocalSearchParams<{
+    const [ option, setOption ] = useState<"activity" | "details">("activity") // Tab menu
+
+    const [ destination, setDestination ] = useState("") // get e update destino da Viagem
+    const [ selectedDates, setSelectedDates ] = useState({} as DatesSelected) // Datas selecionadas do calendario para update
+
+    const [ guestName, setGuestName ] = useState("") // Confirmação do convidado
+    const [ guestEmail, setGuestEmail ] = useState("") // Confirmação do convidado
+
+    const tripParams = useLocalSearchParams<{ // Parametros da rota
         id: string,
         participant?: string
     }>()
     
-    async function getTripDetails() {
+    async function getTripDetails() { // Get de Trip Details
         try {
             setIsLoadingTrip(true)
 
@@ -89,7 +92,7 @@ export default function Trip() {
         }
     }
 
-    function handleSelectDate(selectedDay: DateData) {
+    function handleSelectDate(selectedDay: DateData) { // Lida com a seleção das datas no Modal
         const dates = calendarUtils.orderStartsAtAndEndsAt({
             startsAt: selectedDates.startsAt,
             endsAt: selectedDates.endsAt,
@@ -99,7 +102,7 @@ export default function Trip() {
         setSelectedDates(dates)
     }
 
-    async function handleUpdateTrip() {
+    async function handleUpdateTrip() { // Solicita a atualização da Viagem
         try {
             if(!tripParams.id) {
                 return
@@ -129,11 +132,11 @@ export default function Trip() {
         } catch (err) {
             console.log(err);
         } finally {
-            setIsLoadingTrip(false)
+            setIsUpdatingTrip(false)
         }
     }
 
-    async function handleConfirmedAttendence() {
+    async function handleConfirmedAttendence() { // Lida com a confirmação do convidado
         try {
             if(!tripParams.participant || !tripParams.id) {
                 return
@@ -165,7 +168,7 @@ export default function Trip() {
         }
     }
 
-    async function handleRemoveTrip() {
+    async function handleRemoveTrip() { // Remove a trip do storage do celular
         try {
             Alert.alert("Remover viagem", "Tem certeza que deseja remover a viajem", [
                 {
@@ -185,14 +188,26 @@ export default function Trip() {
         }
     }
 
-    useEffect(() => {
+    useEffect(() => { // Após carregar os componentes faz a consulta a TripDetails
         getTripDetails()
     },[])
 
-    if(isLoadingTrip) {
+    if(isLoadingTrip) { // Exibi loading até requisição terminar
         return <Loading/>
     }
 
+    /**
+     * Input -> Dados da viagem com Button editar
+     * 
+     * if("activiy") <Activities> : <Details> // Alterna entre exibições conforme estado
+     * 
+     * <Tab Menu>
+     * 
+     *  <Modal> Atualizar viagem
+     *      <Modal> Selecionar Data
+     * 
+     * <Modal> Confirmar presença
+     */
     return (
         <View className="flex-1 px-5 pt-16">
             <Input variant="tertiary">
@@ -273,7 +288,7 @@ export default function Trip() {
                         />
                     </Input>
 
-                    <Button onPress={handleUpdateTrip} isLoading={isUpdatingTrip}>
+                    <Button onPress={ handleUpdateTrip } isLoading={ isUpdatingTrip }>
                         <Button.Title>Atualizar</Button.Title>
                     </Button>
 

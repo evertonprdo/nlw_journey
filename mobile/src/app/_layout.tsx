@@ -9,7 +9,7 @@ import {
     Inter_500Medium,
     Inter_400Regular,
     Inter_600SemiBold
-} from "@expo-google-fonts/inter"
+} from "@expo-google-fonts/inter" // Importa as fontes do Google
 
 import { Loading } from "@/components/loading"
 
@@ -20,10 +20,13 @@ export default function Layout() {
         Inter_600SemiBold
     })
 
-    if(!fontsLoaded) {
+    if(!fontsLoaded) { // Garante apenas exibir o app após fontes carregadas
         return <Loading />
     }
 
+    /**
+     * <Slot/> repassa as informações da rota adiante
+     */
     return (
         <View className="flex-1 bg-zinc-950">
             <StatusBar 

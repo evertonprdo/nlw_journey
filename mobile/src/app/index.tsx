@@ -33,20 +33,22 @@ enum MODAL {
 
 export default function Index() {
     // LOADING
-    const [ isCreatingTrip, setIsCreatingTrip ] = useState(false)
-    const [ isGettingTrip, setIsGeetingTrip ] = useState(true)
+    const [ isCreatingTrip, setIsCreatingTrip ] = useState(false) // Await do request de createTrip
+    const [ isGettingTrip, setIsGeetingTrip ] = useState(true) // Await de get trip id do Storage
 
-    //DATA
-    const [ stepForm, setStepForm ] = useState(StepForm.TRIP_DETAILS)
-    const [ selectedDates, setSelectedDates ] = useState({} as DatesSelected)
-    const [ destination, setDestination ] = useState("")
-    const [ emailToInvite, setEmailToInvite ] = useState("")
-    const [ emailsToInvite, setEmailsToInvite ] = useState<string[]>([])
+    // DATA
+    const [ stepForm, setStepForm ] = useState(StepForm.TRIP_DETAILS) // controlador da etapa do form
 
-    //MODAL
-    const [ showModal, setShownModal ] = useState(MODAL.NONE)
+    const [ selectedDates, setSelectedDates ] = useState({} as DatesSelected) // O range de datas selecionadas do calendario
+    const [ destination, setDestination ] = useState("") // Destino da viagem
 
-    function handleNextStepForm() {
+    const [ emailToInvite, setEmailToInvite ] = useState("") // email atual sendo cadastrado
+    const [ emailsToInvite, setEmailsToInvite ] = useState<string[]>([]) // Lista de emails para exibir e enviar
+
+    // MODAL
+    const [ showModal, setShownModal ] = useState(MODAL.NONE) // controlador da exibição do modal
+
+    function handleNextStepForm() { // Lida com o precionar do botão continuar e confirmar viagem e faz e executa o CreateTrip
         if(destination.trim().length === 0 || !selectedDates.startsAt || !selectedDates.endsAt){
             return Alert.alert(
                 "Detalhes da viagem",
@@ -77,13 +79,13 @@ export default function Index() {
         ])
     }
 
-    function handleRemoveEmail(emailToRemove: string) {
+    function handleRemoveEmail(emailToRemove: string) { // Ao clicar no X remove email
         setEmailsToInvite((prevState) => 
             prevState.filter(email => email !== emailToRemove)
         )
     }
 
-    function handleSelectDate(selectedDay: DateData) {
+    function handleSelectDate(selectedDay: DateData) { // Lida com a seleção de datas do calendario
         const dates = calendarUtils.orderStartsAtAndEndsAt({
             startsAt: selectedDates.startsAt,
             endsAt: selectedDates.endsAt,
@@ -93,7 +95,7 @@ export default function Index() {
         setSelectedDates(dates)
     }
 
-    function handleAddEmail() {
+    function handleAddEmail() { // Lida com a incerção de novos emails
         if(!validateInput.email(emailToInvite)) {
             return Alert.alert("Convidado", "E-mail inválido")
         }
@@ -108,7 +110,7 @@ export default function Index() {
         setEmailToInvite("")
     }
 
-    async function saveTrip(tripId: string) {
+    async function saveTrip(tripId: string) { // Salva a trip no Storage do dispositivo
         try {
             await tripStorage.save(tripId)
             router.navigate("/trip/" + tripId)
@@ -121,7 +123,7 @@ export default function Index() {
         }
     }
 
-    async function createTrip() {
+    async function createTrip() { // Faz o request para criar a trip
         try {
             setIsCreatingTrip(true)
 
@@ -144,7 +146,7 @@ export default function Index() {
         }
     }
 
-    async function getTrip() {
+    async function getTrip() { // pega os dados da Trip do Storage, se existir redireciona para /trip/[id]
         try {
             const tripID = await tripStorage.get()
 
@@ -163,7 +165,7 @@ export default function Index() {
         }
     }
 
-    useEffect(() => {
+    useEffect(() => { // Get Trip depois dos componentes renderizados
         getTrip()
     }, [])
 
@@ -171,6 +173,23 @@ export default function Index() {
         return <Loading />
     }
 
+    /**
+     * <A Logo do app />
+     * <O Background do app />
+     * <Titulo />
+     * 
+     * <Input Onde? e <Input Quando? />
+     * 
+     * if(stepForm=2) mostre <Input Convidados onPress -> <Modal de convidados/> />
+     * 
+     * <Button Next -> Confirm/>
+     * 
+     * <Direitos Autorais/>
+     * 
+     * <Modal selecionar datas
+     * 
+     * <Modal selecionar convidados
+     */
     return (
         <View className="flex-1 items-center justify-center px-5">
             <Image 

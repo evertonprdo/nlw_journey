@@ -15,18 +15,18 @@ import { Participant, type ParticipantProps } from "@/components/participant"
 
 export function TripDetails({ tripId }: {tripId: string}) {
     // MODAL
-    const [ showNewLinkModal, setShowNewLinkModal ] = useState(false);
+    const [ showNewLinkModal, setShowNewLinkModal ] = useState(false); // Controlador do modal
 
     // LOADING
-    const [ isCreatingLinkTrip, setIsCreatingLinkTrip ] = useState(false)
+    const [ isCreatingLinkTrip, setIsCreatingLinkTrip ] = useState(false) // Await de criar link
 
     // LIST
-    const [ links, setLinks ] = useState<TripLinkProps[]>([])
-    const [ participants, setParticipants ] = useState<ParticipantProps[]>([])
+    const [ links, setLinks ] = useState<TripLinkProps[]>([]) // A lista de links
+    const [ participants, setParticipants ] = useState<ParticipantProps[]>([]) // A Lista de participants
 
     // DATA
-    const [ linkTitle, setLinkTitle ] = useState("")
-    const [ linkURL, setLinkURL ] = useState("")
+    const [ linkTitle, setLinkTitle ] = useState("") // Campo do input para novo link
+    const [ linkURL, setLinkURL ] = useState("") // Campo do input para novo link
 
     function resetNewLinkFields() {
         setLinkTitle("")
@@ -34,7 +34,7 @@ export function TripDetails({ tripId }: {tripId: string}) {
         setShowNewLinkModal(false)
     }
 
-    async function handleCreateTripLink() {
+    async function handleCreateTripLink() { // Request para criar novo link
         try {
             if(!linkTitle.trim()) {
                 return Alert.alert("Link", "Informe um título para o link!")
@@ -61,7 +61,7 @@ export function TripDetails({ tripId }: {tripId: string}) {
         }
     }
 
-    async function getTripLinks() {
+    async function getTripLinks() { // Request para pegar a lista de itens
         try {
             const links = await linksServer.getLinksByTripId(tripId)
             setLinks(links)
@@ -72,7 +72,7 @@ export function TripDetails({ tripId }: {tripId: string}) {
         }
     }
 
-    async function getTripParticipants() {
+    async function getTripParticipants() { // Request para pegar a lista de participantes
         try {
             const participants = await participantsServer.getByTripId(tripId)
             setParticipants(participants)
@@ -86,6 +86,18 @@ export function TripDetails({ tripId }: {tripId: string}) {
         getTripParticipants()
     },[])
 
+
+    /**
+     * Links
+     * 
+     * if has items <FlatList com render item <TripLink/> />
+     * 
+     * <Button -> <Modal novo link/> />
+     * 
+     * <Participants FlatList />
+     * 
+     * <Modal novo link />
+     */
     return (
         <View className="flex-1 mt-10">
             <Text className="text-zinc-50 text-2xl font-semibold mb-2">
