@@ -84,7 +84,7 @@ export function TripActivities({ tripDetails }: Props) {
     async function getTripActivities() {
         try {
             const activities = await activitiesServer.getActivitiesByTripId(tripDetails.id)
-            
+           
             const activitiesToSectionList = activities.map((dayActivitie) => ({
                 title: {
                     dayNumber: dayjs(dayActivitie.date).date(),
@@ -97,7 +97,7 @@ export function TripActivities({ tripDetails }: Props) {
                     isBefore: dayjs(activity.occurs_at).isBefore(dayjs())
                 }))
             }))
-
+            
             setTripActivities(activitiesToSectionList)
         } catch (error) {
             console.log(error)
