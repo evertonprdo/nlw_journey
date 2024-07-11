@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch --env-file .env src/http/server.ts",
+    "db:studio": "prisma studio --port 5556"
   },
   "keywords": [],
   "author": "",
